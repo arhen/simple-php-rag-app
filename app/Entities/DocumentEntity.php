@@ -13,7 +13,7 @@ use LLPhant\Embeddings\VectorStores\Doctrine\VectorType;
 #[Table(name: 'documents')]
 class DocumentEntity extends DoctrineEmbeddingEntityBase
 {
-    #[ORM\Column(type: VectorType::VECTOR, length: 3072)]
+    #[ORM\Column(type: VectorType::VECTOR, length: 768)]
     public ?array $embedding;
 
     #[ORM\Column(type: Types::INTEGER)]

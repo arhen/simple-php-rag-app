@@ -10,11 +10,14 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\ORMSetup;
 use LLPhant\Chat\Enums\ChatRole;
 use LLPhant\Chat\Message;
+use LLPhant\Chat\OllamaChat;
 use LLPhant\Embeddings\DataReader\FileDataReader;
 use LLPhant\Embeddings\DocumentSplitter\DocumentSplitter;
 use LLPhant\Embeddings\EmbeddingFormatter\EmbeddingFormatter;
+use LLPhant\Embeddings\EmbeddingGenerator\Ollama\OllamaEmbeddingGenerator;
 use LLPhant\Embeddings\EmbeddingGenerator\OpenAI\OpenAI3LargeEmbeddingGenerator;
 use LLPhant\Embeddings\VectorStores\Doctrine\DoctrineVectorStore;
+use LLPhant\OllamaConfig;
 
 class RagService
 {
@@ -44,8 +47,14 @@ class RagService
         $connection = DriverManager::getConnection($conn);
         $this->entityManager = new EntityManager($connection, $config);
         $this->vectorStore = new DoctrineVectorStore($this->entityManager, DocumentEntity::class);
-        $this->embeddingGenerator = new OpenAI3LargeEmbeddingGenerator();
-        $this->chat = new OpenAIChat();
+        $embeddedConfig = new OllamaConfig();
+        $embeddedConfig->url = 'http://localhost:11434/api/embeddings';
+        $embeddedConfig->model = 'nomic-embed-text';
+        $this->embeddingGenerator = new OllamaEmbeddingGenerator($embeddedConfig);
+        $chatConfig = new OllamaConfig();
+        $chatConfig->url = 'http://localhost:11434/api/';
+        $chatConfig->model = 'llama3';
+        $this->chat = new OllamaChat($chatConfig);
     }
 
     public function addDocument($filePath, $user)

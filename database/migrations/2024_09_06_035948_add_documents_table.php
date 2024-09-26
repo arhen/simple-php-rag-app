@@ -20,7 +20,7 @@ return new class extends Migration
         });
 
         // Add the VECTOR column for embedding
-        DB::statement('ALTER TABLE documents ADD COLUMN embedding VECTOR(3072)');
+        DB::statement('ALTER TABLE documents ADD COLUMN embedding VECTOR(768)');
     }
 
     /**
